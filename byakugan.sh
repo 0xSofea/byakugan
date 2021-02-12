@@ -191,11 +191,8 @@ getDir(){
 	#for fuzzed in $TARGET_PATH/fuzz; do
 	#cat $TARGET_PATH/${sub}-result_dir.tmp | jq '[.results[]|{status: .status, length: .length, url: .url}]' | grep -oP "status\":\s(\d{3})|length\":\s(\d{1,7})|url\":\s\"(http[s]?:\/\/.*?)\"" | paste -d' ' - - - | awk '{print $2" "$4" "$6}' | sed 's/\"//g' > $TARGET_PATH/${sub}_result_dir.txt     
 
-#interlace -tL /root/byakugan/finefriends.social-14-01-2021/min.txt -o /root/byakugan/finefriends.social-14-01-2021/fuzz -threads 5 -c "ffuf -mc all -c -u _target_/FUZZ -w ~/byakugan/wordlist/dicc.txt -maxtime 900 -D -e js,php,bak,txt,asp,aspx,jsp,html,zip,jar,sql,json,old,gz,shtml,log,swp,yaml,yml,config,save,rsa,ppk -ac -od _output_ -o _target_-result_dir.tmp"
-
 #ffuf -mc all -c -u http://hackycorp.com/FUZZ -w ~/byakugan/wordlist/dict.txt -maxtime 900 -D -e js,php,bak,txt,asp,aspx,jsp,html,zip,jar,sql,json,old,gz,shtml,log,swp,yaml,yml,config,save,rsa,ppk -ac -o http://hackycorp.com_result_dir.tmp
 
-#interlace -tL /root/byakugan/msia/ump.edu.my-24-09-2020/min.txt -threads 5 -c "ffuf -mc all -ac -w ~/byakugan/wordlist/dicc.txt -maxtime 900 -u _target_/FUZZ -or -o _target_ffuf.txt &>/dev/null" &>/dev/null
 }
 
 nucleiPlz(){
