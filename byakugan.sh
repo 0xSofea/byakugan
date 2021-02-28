@@ -191,8 +191,11 @@ getDir(){
 	#for fuzzed in $TARGET_PATH/fuzz; do
 	#cat $TARGET_PATH/${sub}-result_dir.tmp | jq '[.results[]|{status: .status, length: .length, url: .url}]' | grep -oP "status\":\s(\d{3})|length\":\s(\d{1,7})|url\":\s\"(http[s]?:\/\/.*?)\"" | paste -d' ' - - - | awk '{print $2" "$4" "$6}' | sed 's/\"//g' > $TARGET_PATH/${sub}_result_dir.txt     
 
+#interlace -tL /root/byakugan/finefriends.social-14-01-2021/min.txt -o /root/byakugan/finefriends.social-14-01-2021/fuzz -threads 5 -c "ffuf -mc all -c -u _target_/FUZZ -w ~/byakugan/wordlist/dicc.txt -maxtime 900 -D -e js,php,bak,txt,asp,aspx,jsp,html,zip,jar,sql,json,old,gz,shtml,log,swp,yaml,yml,config,save,rsa,ppk -ac -od _output_ -o _target_-result_dir.tmp"
+
 #ffuf -mc all -c -u http://hackycorp.com/FUZZ -w ~/byakugan/wordlist/dict.txt -maxtime 900 -D -e js,php,bak,txt,asp,aspx,jsp,html,zip,jar,sql,json,old,gz,shtml,log,swp,yaml,yml,config,save,rsa,ppk -ac -o http://hackycorp.com_result_dir.tmp
 
+#interlace -tL /root/byakugan/msia/ump.edu.my-24-09-2020/min.txt -threads 5 -c "ffuf -mc all -ac -w ~/byakugan/wordlist/dicc.txt -maxtime 900 -u _target_/FUZZ -or -o _target_ffuf.txt &>/dev/null" &>/dev/null
 }
 
 nucleiPlz(){
@@ -297,6 +300,39 @@ lfimein(){
 
 }
 
+xssplz(){
+#==============================XSS Scanning=======================================	
+	log "XSS scan initiated"
+
+	status "Running XSStrike"
+	mkdir -p $TARGET_PATH/gf/xss
+	cat $TARGET_PATH/gf/xss.txt | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | qsreplace -a > $TARGET_PATH/gf/xss/cleanxss.txt
+	cat $TARGET_PATH/gf/cleanxss.txt | Gxss -c 100 blyat | anew -q $TARGET_PATH/gf/xss/reflected.txt
+	xsstrike --seeds $TARGET_PATH/gf/xss/reflected.txt -t 30 --crawl --blind --skip > $TARGET_PATH/gf/xss/vulnxss.txt
+}
+
+sqliplz(){
+#==============================SQLi Scanning=======================================	
+	log "SQLi scan initiated"
+
+	status "Running DSSS"
+	mkdir -p $TARGET_PATH/gf/sqli
+	cat $TARGET_PATH/gf/sqli.txt | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | qsreplace -a > $TARGET_PATH/gf/sqli/cleansqli.txt
+	for url in $(cat $TARGET_PATH/gf/sqli/cleansqli.txt); do
+		dsss -u "$url" > $TARGET_PATH/gf/sqli/result.txt 
+	done	
+}
+
+openredirplz(){
+#==============================Open Redirect Scanning=======================================	
+	log "Open redirect scan initiated"
+
+	status "Running FFUF for Open Redirect"
+	mkdir -p $TARGET_PATH/gf/or
+	cat $TARGET_PATH/gf/redirect.txt 
+	# chrome bukak all list after replace with payload
+}
+
 
 #jsCollector(){
 #==============================Collecting .Js files=======================================
@@ -317,8 +353,7 @@ lfimein(){
 aquasnap(){
 #==============================Screenshotszz=======================================
 	status "Running Aquatone"
-	cat $TARGET_PATH/alives.txt | ~/go/bin/aquatone -chrome-path /usr/bin/chromium -http-timeout 10000 -scan-timeout 300 -ports xlarge -out $TARGET_PATH/snapss
-	
+	cat $TARGET_PATH/alives.txt | ~/go/bin/aquatone -chrome-path /usr/bin/chromium -http-timeout 10000 -scan-timeout 300 -ports xlarge -out $TARGET_PATH/snapss	
 }
 
 
@@ -336,7 +371,7 @@ while read line; do
 	nucleiPlz
 	gfPatterns
 	cors
-	cmscan
+	cmsScan
 	crlfScan
 	lfimein
 	aquasnap
